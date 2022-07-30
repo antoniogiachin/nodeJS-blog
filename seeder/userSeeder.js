@@ -21,7 +21,7 @@ const newUsers = [
   }),
 ];
 
-const seeder = async () => {
+const userSeeder = async () => {
   try {
     await User.deleteMany({});
 
@@ -33,4 +33,4 @@ const seeder = async () => {
   }
 };
 
-module.exports = { seeder };
+module.exports = { userSeeder };
