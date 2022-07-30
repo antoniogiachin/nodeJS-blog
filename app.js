@@ -4,6 +4,8 @@ const dotenv = require("dotenv").config();
 const app = express();
 app.use(express.json());
 
+const { seeder } = require("./seeder/userSeeder");
+
 async function connection() {
   try {
     const connection = await mongoose.connect(process.env.MONGO_URI);
@@ -14,4 +16,6 @@ async function connection() {
   }
 }
 
-connection();
+connection().then(() => {
+  seeder();
+});
