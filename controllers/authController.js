@@ -18,17 +18,22 @@ const login_controller = async (req, res) => {
   // CHECK EMAIL
   let foundUser;
   try {
-    foundUser = await User.find({ email });
+    foundUser = await User.findOne({ email: email });
   } catch (e) {
-    res.statusCode(422);
-    throw new Error(e);
+    const error = new Error("No user with given email found");
+    error.statusCode = 422;
+    error.data = e;
+    throw error;
   }
+
   // CHECK PASSWORD
   try {
     await bcrypt.compare(password, foundUser.password);
   } catch (e) {
-    res.statusCode(422);
-    throw new Error(e);
+    const error = new Error("Wrong password given");
+    error.statusCode = 422;
+    error.data = e;
+    throw error;
   }
 
   const token = await jwt.sign(
@@ -47,10 +52,9 @@ const register_controller = async (req, res) => {
   // ERRORI
   const validationErrors = validationResult(req);
   if (!validationErrors.isEmpty()) {
-    const error = new Error("Validation failed");
-    error.statusCode = 422;
-    error.data = validationErrors.array();
-    throw error;
+    console.log(validationErrors);
+    res.statusCode = 422;
+    throw new Error("Validation failed");
   }
 
   const {
@@ -70,7 +74,7 @@ const register_controller = async (req, res) => {
   }
 
   // HASH PASSWORD
-  const hashedPWD = await bcrypt(password, 12);
+  const hashedPWD = await bcrypt.hash(password, 12);
   const newUser = new User({
     name,
     username,
@@ -79,6 +83,7 @@ const register_controller = async (req, res) => {
     email,
     password: hashedPWD,
   });
+
   try {
     await newUser.save();
   } catch (e) {

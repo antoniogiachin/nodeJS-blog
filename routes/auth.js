@@ -8,55 +8,9 @@ const {
 } = require("../controllers/authController");
 
 // POST LOGIN
-// validator
-const loginValidator = [
-  body("username")
-    .isString()
-    .isLength({ min: 2 })
-    .not()
-    .isEmpty()
-    .trim()
-    .escape(),
-  ,
-  body("password")
-    .isString()
-    .not()
-    .isEmpty()
-    .trim()
-    .escape()
-    .isStrongPassword({ minLength: 8, minUppercase: 1, minSymbols: 1 }),
-  body("confirmPassword")
-    .isString()
-    .not()
-    .isEmpty()
-    .trim()
-    .escape()
-    .isStrongPassword({ minLength: 8, minUppercase: 1, minSymbols: 1 }),
-];
 // route
-router.post("/login", loginValidator, login_controller);
-
-// POST REGISTER
-// validator
-const registerValidator = [
-  body("name").isString().isLength({ min: 2 }).not().isEmpty().trim().escape(),
-  ,
-  body("username")
-    .isString()
-    .isLength({ min: 2 })
-    .not()
-    .isEmpty()
-    .trim()
-    .escape(),
-  ,
-  body("gender").isString().trim(),
-  body("birthDate")
-    .isDate()
-    .isISO8601()
-    .toDate()
-    .isAfter("01-01-1900")
-    .isBefore("01-01-2100"),
-  ,
+router.post(
+  "/login",
   body("email").isEmail().normalizeEmail().isLength({ min: 3 }),
   body("password")
     .isString()
@@ -65,8 +19,32 @@ const registerValidator = [
     .trim()
     .escape()
     .isStrongPassword({ minLength: 8, minUppercase: 1, minSymbols: 1 }),
-];
+  login_controller
+);
+
+// POST REGISTER
 // route
-router.post("/register", registerValidator, register_controller);
+router.post(
+  "/register",
+  body("name").isString().isLength({ min: 2 }).not().isEmpty().trim().escape(),
+  body("username")
+    .isString()
+    .isLength({ min: 2 })
+    .not()
+    .isEmpty()
+    .trim()
+    .escape(),
+  body("gender").isString().trim(),
+  body("birthDate").toDate(),
+  body("email").isEmail().normalizeEmail().isLength({ min: 3 }),
+  body("password")
+    .isString()
+    .not()
+    .isEmpty()
+    .trim()
+    .escape()
+    .isStrongPassword({ minLength: 8, minUppercase: 1, minSymbols: 1 }),
+  register_controller
+);
 
 module.exports = router;

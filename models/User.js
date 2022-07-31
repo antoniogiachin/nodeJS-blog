@@ -20,7 +20,7 @@ const userSchema = new Schema(
       required: false,
       default: "Not declared",
     },
-    birthDate: { type: Date, minLength: 2, required: true },
+    birthDate: { type: String, minLength: 2, required: true },
     email: {
       type: String,
       minLength: 5,
